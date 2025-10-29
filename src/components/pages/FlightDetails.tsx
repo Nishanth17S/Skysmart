@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useContext } from 'react';
 import { AppContext } from '../../App';
 import { Plane, Clock, Users, Briefcase, Coffee, Wifi, ArrowRight, Star, TrendingDown, Calendar } from 'lucide-react';
+import { formatINR } from '../../utils/indian-locale';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
@@ -17,15 +18,15 @@ export default function FlightDetails() {
   // Mock flight data - in real app, fetch from API
   const flight = {
     id: id,
-    airline: 'Delta Airlines',
-    flightNumber: 'DL 123',
-    from: 'New York (JFK)',
+    airline: 'Air India',
+    flightNumber: 'AI 123',
+    from: 'Delhi (DEL)',
     to: 'London (LHR)',
     departure: '08:30 AM',
     arrival: '08:45 PM',
     date: 'Dec 15, 2025',
     duration: '7h 15m',
-    price: 489,
+    price: 40500,
     stops: 0,
     aircraft: 'Boeing 777-300ER',
     aiScore: 95,
@@ -44,18 +45,18 @@ export default function FlightDetails() {
   const fareClasses = [
     {
       name: 'Economy',
-      price: 489,
+      price: 40500,
       features: ['Standard seat', '1 checked bag', 'Meals included', 'No changes'],
     },
     {
       name: 'Premium Economy',
-      price: 789,
+      price: 65500,
       features: ['Extra legroom', '2 checked bags', 'Priority boarding', 'Free changes'],
       popular: true,
     },
     {
       name: 'Business',
-      price: 1899,
+      price: 157500,
       features: ['Lie-flat seat', '3 checked bags', 'Lounge access', 'Free changes & cancellations'],
     },
   ];
@@ -194,7 +195,7 @@ export default function FlightDetails() {
                   <CardHeader>
                     <CardTitle className="text-center">
                       <p className="text-foreground">{fareClass.name}</p>
-                      <p className="text-foreground mt-2">${fareClass.price}</p>
+                      <p className="text-foreground mt-2">{formatINR(fareClass.price)}</p>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>

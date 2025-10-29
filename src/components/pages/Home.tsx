@@ -1,253 +1,487 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppContext } from '../../App';
-import { Search, Calendar, Users, TrendingUp, Sparkles, ArrowRight, Check } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'motion/react';
+import { ChevronDown, Sparkles, TrendingUp, Shield } from 'lucide-react';
 import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
 import { Card, CardContent } from '../ui/card';
-import { ImageWithFallback } from '../figma/ImageWithFallback';
-import ChatbotWidget from '../ChatbotWidget';
 
 export default function Home() {
   const navigate = useNavigate();
-  const context = useContext(AppContext);
-  const [searchData, setSearchData] = useState({
-    from: '',
-    to: '',
-    date: '',
-    passengers: '1',
-  });
+  const [animationComplete, setAnimationComplete] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const cloudY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const globeScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
+  const globeOpacity = useTransform(scrollYProgress, [0, 0.5], [0.2, 0.05]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const params = new URLSearchParams({
-      from: searchData.from,
-      to: searchData.to,
-      date: searchData.date,
-      passengers: searchData.passengers,
-    });
-    navigate(`/flights/search?${params.toString()}`);
-  };
+  useEffect(() => {
+    // Set animation complete after plane animation finishes
+    const timer = setTimeout(() => {
+      setAnimationComplete(true);
+      // Optional: Play a subtle sound when plane lands (commented out by default)
+      // const audio = new Audio('/sounds/plane-land.mp3');
+      // audio.volume = 0.3;
+      // audio.play().catch(() => {}); // Catch in case user hasn't interacted yet
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
 
-  const trendingRoutes = [
-    { from: 'New York', to: 'London', price: '$489', image: 'https://images.unsplash.com/photo-1517144447511-aebb25bbc5fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaXR5JTIwc2t5bGluZSUyMHRyYXZlbHxlbnwxfHx8fDE3NjE1ODczNjd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral' },
-    { from: 'San Francisco', to: 'Tokyo', price: '$649', image: 'https://images.unsplash.com/photo-1549654501-5d270e56e92c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhaXJwbGFuZSUyMHN1bnNldCUyMHRyYXZlbHxlbnwxfHx8fDE3NjE1NzI3MTh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral' },
-    { from: 'Los Angeles', to: 'Paris', price: '$529', image: 'https://images.unsplash.com/photo-1586351501894-489e1c20d2cd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMHRyYXZlbGVyJTIwYWlycG9ydHxlbnwxfHx8fDE3NjE2NDYxNDR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral' },
-  ];
-
-  const features = [
-    { icon: Sparkles, title: 'AI-Powered Search', description: 'Smart recommendations based on your preferences' },
-    { icon: TrendingUp, title: 'Fare Prediction', description: 'Know the best time to book with AI insights' },
-    { icon: Check, title: 'Price Alerts', description: 'Get notified when prices drop on your routes' },
-  ];
-
-  const testimonials = [
-    { name: 'Sarah Johnson', role: 'Frequent Traveler', quote: 'SkySmart saved me $300 on my last booking!' },
-    { name: 'Michael Chen', role: 'Business Consultant', quote: 'The AI chat makes booking so easy and fast.' },
-    { name: 'Emma Williams', role: 'Digital Nomad', quote: 'Price alerts are a game-changer for budget travel.' },
-  ];
+  // SVG Path for plane flight - curved arc across the screen
+  const flightPath = "M 50 400 Q 300 100, 600 350";
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary/10 via-background to-accent/5 py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h1 className="text-foreground mb-4">
-              Smart Flight Booking with AI
-            </h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Find the best flights with AI-powered fare prediction, instant price alerts, and conversational booking
-            </p>
-          </div>
+    <motion.div 
+      className="min-h-screen overflow-hidden relative"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+    >
+      {/* Animated gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-white to-orange-50"></div>
+      <motion.div 
+        className="absolute inset-0 bg-gradient-to-br from-sky-300/30 via-transparent to-orange-100/30"
+        animate={{
+          background: [
+            'linear-gradient(to bottom right, rgba(125, 211, 252, 0.3), transparent, rgba(254, 215, 170, 0.3))',
+            'linear-gradient(to bottom right, rgba(56, 189, 248, 0.3), transparent, rgba(251, 146, 60, 0.3))',
+            'linear-gradient(to bottom right, rgba(125, 211, 252, 0.3), transparent, rgba(254, 215, 170, 0.3))',
+          ]
+        }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      >
+      </motion.div>
 
-          {/* Search Form */}
-          <Card className="max-w-4xl mx-auto shadow-lg">
-            <CardContent className="p-6">
-              <form onSubmit={handleSearch} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="from">From</Label>
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        id="from"
-                        placeholder="New York"
-                        value={searchData.from}
-                        onChange={(e) => setSearchData({ ...searchData, from: e.target.value })}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="to">To</Label>
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        id="to"
-                        placeholder="London"
-                        value={searchData.to}
-                        onChange={(e) => setSearchData({ ...searchData, to: e.target.value })}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="date">Departure</Label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        id="date"
-                        type="date"
-                        value={searchData.date}
-                        onChange={(e) => setSearchData({ ...searchData, date: e.target.value })}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="passengers">Passengers</Label>
-                    <div className="relative">
-                      <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        id="passengers"
-                        type="number"
-                        min="1"
-                        max="9"
-                        value={searchData.passengers}
-                        onChange={(e) => setSearchData({ ...searchData, passengers: e.target.value })}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-                <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-                  <Search className="w-4 h-4 mr-2" />
-                  Search Flights
-                </Button>
-              </form>
-              <div className="mt-4 text-center">
-                <p className="text-muted-foreground mb-2">Or try our AI assistant</p>
-                <Button variant="outline" onClick={() => navigate('/chat')}>
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Chat with AI
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+      {/* Hero Section with Animation */}
+      <section className="relative min-h-[70vh] md:h-[70vh] flex items-center justify-center overflow-hidden pt-20 pb-16 md:pt-0 md:pb-0">
+        {/* Ambient glow effects */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        {/* Animated Clouds - Parallax Effect */}
+        <motion.div style={{ y: cloudY }} className="absolute inset-0 pointer-events-none">
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute"
+              initial={{ x: -100, opacity: 0.3 }}
+              animate={{ 
+                x: ['0%', '100%'],
+                y: [Math.random() * 200, Math.random() * 200 + 50]
+              }}
+              transition={{
+                duration: 15 + i * 3,
+                repeat: Infinity,
+                ease: "linear",
+                delay: i * 2
+              }}
+              style={{
+                top: `${20 + i * 10}%`,
+                left: `${i * 15}%`,
+              }}
+            >
+              <svg width="120" height="60" viewBox="0 0 120 60" fill="none">
+                <ellipse cx="60" cy="30" rx="50" ry="25" fill="white" opacity="0.6" />
+                <ellipse cx="40" cy="35" rx="35" ry="20" fill="white" opacity="0.5" />
+                <ellipse cx="80" cy="35" rx="30" ry="18" fill="white" opacity="0.5" />
+              </svg>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Globe/Skyline Background */}
+        <motion.div 
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ scale: globeScale, opacity: globeOpacity }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
+        >
+          <svg width="500" height="500" viewBox="0 0 500 500" className="text-primary">
+            <circle cx="250" cy="250" r="200" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.3" />
+            <circle cx="250" cy="250" r="180" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.2" />
+            <circle cx="250" cy="250" r="160" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.2" />
+            {/* Globe grid lines */}
+            <path d="M 250 50 Q 250 250, 250 450" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.2" />
+            <path d="M 150 250 Q 250 250, 350 250" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.2" />
+            <path d="M 50 250 Q 250 200, 450 250" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.15" />
+            <path d="M 50 250 Q 250 300, 450 250" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.15" />
+            {/* Continent shapes - simplified */}
+            <circle cx="200" cy="200" r="30" fill="currentColor" opacity="0.1" />
+            <circle cx="320" cy="280" r="25" fill="currentColor" opacity="0.1" />
+            <circle cx="280" cy="180" r="20" fill="currentColor" opacity="0.1" />
+          </svg>
+        </motion.div>
+
+        {/* City Skyline Silhouette */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 opacity-20">
+          <svg width="100%" height="128" viewBox="0 0 1200 128" preserveAspectRatio="none" className="text-foreground">
+            <rect x="50" y="60" width="60" height="68" fill="currentColor" />
+            <rect x="120" y="40" width="50" height="88" fill="currentColor" />
+            <rect x="180" y="70" width="45" height="58" fill="currentColor" />
+            <rect x="240" y="30" width="70" height="98" fill="currentColor" />
+            <rect x="320" y="55" width="55" height="73" fill="currentColor" />
+            <rect x="900" y="50" width="65" height="78" fill="currentColor" />
+            <rect x="975" y="35" width="60" height="93" fill="currentColor" />
+            <rect x="1045" y="65" width="50" height="63" fill="currentColor" />
+            <rect x="1105" y="45" width="55" height="83" fill="currentColor" />
+          </svg>
         </div>
+
+        {/* Flight Path SVG - Hidden, used for animation */}
+        <svg 
+          className="absolute inset-0 w-full h-full pointer-events-none" 
+          viewBox="0 0 800 600"
+          preserveAspectRatio="xMidYMid meet"
+          style={{ overflow: 'visible' }}
+        >
+          <defs>
+            <path
+              id="flightPath"
+              d={flightPath}
+              fill="none"
+              stroke="transparent"
+            />
+          </defs>
+          
+          {/* Animated Plane */}
+          <motion.g
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.g
+              animate={{
+                offsetDistance: ['0%', '100%'],
+              }}
+              transition={{
+                duration: 4,
+                ease: [0.43, 0.13, 0.23, 0.96],
+              }}
+              style={{
+                offsetPath: `path("${flightPath}")`,
+                offsetRotate: 'auto',
+              }}
+            >
+              {/* Plane SVG */}
+              <g transform="translate(-25, -25)">
+                <motion.g
+                  animate={{ 
+                    y: [0, -5, 0],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  {/* Plane body */}
+                  <path
+                    d="M 25 15 L 30 25 L 25 28 L 20 25 Z"
+                    fill="#007ACC"
+                    stroke="#005A9C"
+                    strokeWidth="1"
+                  />
+                  {/* Wings */}
+                  <path
+                    d="M 15 20 L 35 20 L 32 25 L 18 25 Z"
+                    fill="#007ACC"
+                    stroke="#005A9C"
+                    strokeWidth="1"
+                  />
+                  {/* Tail */}
+                  <path
+                    d="M 20 15 L 30 15 L 25 18 Z"
+                    fill="#FF6B35"
+                    stroke="#E55A25"
+                    strokeWidth="1"
+                  />
+                  {/* Windows */}
+                  <circle cx="25" cy="22" r="1.5" fill="white" opacity="0.8" />
+                  <circle cx="23" cy="22" r="1" fill="white" opacity="0.6" />
+                  <circle cx="27" cy="22" r="1" fill="white" opacity="0.6" />
+                </motion.g>
+              </g>
+              
+              {/* Contrail effect */}
+              <motion.line
+                x1="-50"
+                y1="0"
+                x2="0"
+                y2="0"
+                stroke="white"
+                strokeWidth="2"
+                opacity="0.4"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 1, delay: 1 }}
+              />
+            </motion.g>
+          </motion.g>
+        </svg>
+
+        {/* Hero Content */}
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+          >
+            <motion.div
+              className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 mb-6"
+              animate={{ y: [0, -5, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <Sparkles className="w-5 h-5 text-accent" />
+              <span className="text-foreground">AI-Powered Flight Booking</span>
+            </motion.div>
+
+            <h1 className="text-5xl md:text-6xl lg:text-7xl text-foreground mb-4 leading-tight font-bold">
+              Your Smart Travel
+              <br />
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Starts Here
+              </span>
+            </h1>
+
+            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Experience the future of flight booking with AI-powered insights, 
+              instant price alerts, and personalized recommendations.
+            </p>
+
+            {/* CTA Buttons */}
+            <motion.div
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 4.2, duration: 0.6 }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  size="lg"
+                  className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-2xl shadow-accent/40 px-10 py-7 text-lg relative overflow-hidden group"
+                  onClick={() => navigate('/flights/search')}
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                    initial={{ x: '-100%' }}
+                    animate={{ x: '100%' }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  />
+                  <span className="relative z-10 flex items-center">
+                    Start Your Journey
+                    <motion.svg
+                      className="w-5 h-5 ml-2"
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </motion.svg>
+                  </span>
+                </Button>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="bg-white/90 backdrop-blur-sm border-2 border-primary hover:bg-primary/10 shadow-lg px-10 py-7 text-lg"
+                  onClick={() => navigate('/dashboard')}
+                >
+                  Enter SkySmart
+                </Button>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <motion.div
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: animationComplete ? 1 : 0, y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <div className="flex flex-col items-center text-muted-foreground">
+            <span className="text-sm mb-2">Scroll to explore</span>
+            <ChevronDown className="w-6 h-6" />
+          </div>
+        </motion.div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 bg-secondary/30">
+      {/* Powered by AI Section */}
+      <section className="py-16 bg-gradient-to-b from-orange-50 to-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-center text-foreground mb-12">Why Choose SkySmart?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {features.map((feature, index) => {
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="inline-flex items-center space-x-2 bg-primary/10 rounded-full px-6 py-3 mb-4">
+              <Sparkles className="w-5 h-5 text-primary" />
+              <span className="text-primary">Powered by AI for Smarter Flight Booking</span>
+            </div>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Our advanced AI analyzes millions of flights to bring you the best deals, 
+              predict price trends, and personalize your travel experience.
+            </p>
+          </motion.div>
+
+          {/* Feature Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {[
+              {
+                icon: Sparkles,
+                title: 'AI-Powered Search',
+                description: 'Smart recommendations based on your preferences and travel history',
+                color: 'bg-primary/10 text-primary',
+              },
+              {
+                icon: TrendingUp,
+                title: 'Price Prediction',
+                description: 'Know exactly when to book with our fare forecasting technology',
+                color: 'bg-accent/10 text-accent',
+              },
+              {
+                icon: Shield,
+                title: 'Secure & Trusted',
+                description: 'Bank-level encryption and PCI-DSS compliant payment processing',
+                color: 'bg-green-500/10 text-green-600',
+              },
+            ].map((feature, index) => {
               const Icon = feature.icon;
               return (
-                <Card key={index} className="text-center hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Icon className="w-8 h-8 text-primary" />
-                    </div>
-                    <h3 className="text-foreground mb-2">{feature.title}</h3>
-                    <p className="text-muted-foreground">{feature.description}</p>
-                  </CardContent>
-                </Card>
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.2, duration: 0.6 }}
+                >
+                  <Card className="h-full hover:shadow-xl transition-all duration-300 group cursor-pointer border-2 border-transparent hover:border-primary/20">
+                    <CardContent className="p-8 text-center">
+                      <motion.div
+                        className={`w-16 h-16 ${feature.color} rounded-2xl flex items-center justify-center mx-auto mb-6`}
+                        whileHover={{ rotate: 360, scale: 1.1 }}
+                        transition={{ duration: 0.6 }}
+                      >
+                        <Icon className="w-8 h-8" />
+                      </motion.div>
+                      <h3 className="text-foreground mb-3 group-hover:text-primary transition-colors">
+                        {feature.title}
+                      </h3>
+                      <p className="text-muted-foreground">
+                        {feature.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               );
             })}
           </div>
-        </div>
-      </section>
 
-      {/* Trending Routes */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-foreground">Trending Routes</h2>
-            <Button variant="ghost" onClick={() => navigate('/flights/search')}>
-              View All <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {trendingRoutes.map((route, index) => (
-              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
-                <div className="relative h-48">
-                  <ImageWithFallback
-                    src={route.image}
-                    alt={`${route.from} to ${route.to}`}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-4 right-4 bg-accent text-white px-3 py-1 rounded-full">
-                    {route.price}
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-muted-foreground">From</p>
-                      <p className="text-foreground">{route.from}</p>
-                    </div>
-                    <ArrowRight className="w-5 h-5 text-muted-foreground" />
-                    <div>
-                      <p className="text-muted-foreground">To</p>
-                      <p className="text-foreground">{route.to}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+          {/* Stats Section */}
+          <motion.div
+            className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            {[
+              { number: '1M+', label: 'Flights Searched Daily' },
+              { number: '500K+', label: 'Happy Travelers' },
+              { number: '95%', label: 'Customer Satisfaction' },
+            ].map((stat, index) => (
+              <motion.div
+                key={index}
+                className="p-6"
+                whileHover={{ scale: 1.05 }}
+              >
+                <motion.div
+                  className="text-4xl md:text-5xl font-bold text-foreground mb-2"
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.6 + index * 0.1, type: "spring", stiffness: 200 }}
+                >
+                  {stat.number}
+                </motion.div>
+                <p className="text-muted-foreground">{stat.label}</p>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
+
+          {/* Final CTA */}
+          <motion.div
+            className="text-center mt-16"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+          >
+            <Button
+              size="lg"
+              className="bg-primary hover:bg-primary/90 shadow-lg"
+              onClick={() => navigate('/flights/search')}
+            >
+              <Sparkles className="w-5 h-5 mr-2" />
+              Explore Flights Now
+            </Button>
+          </motion.div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-16 bg-secondary/30">
+      {/* Journey Preview Section */}
+      <section className="py-20 bg-gradient-to-b from-white to-secondary/20">
         <div className="container mx-auto px-4">
-          <h2 className="text-center text-foreground mb-12">What Our Users Say</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index}>
-                <CardContent className="p-6">
-                  <p className="text-foreground mb-4">"{testimonial.quote}"</p>
-                  <div>
-                    <p className="text-foreground">{testimonial.name}</p>
-                    <p className="text-muted-foreground">{testimonial.role}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <motion.div
+            className="max-w-4xl mx-auto text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-foreground mb-6">
+              Ready to Transform Your Travel Experience?
+            </h2>
+            <p className="text-muted-foreground mb-12 max-w-2xl mx-auto">
+              Join thousands of travelers who save time and money with SkySmart's 
+              intelligent booking platform. Your next adventure is just a click away.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  size="lg"
+                  className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg px-8"
+                  onClick={() => navigate('/signup')}
+                >
+                  Get Started Free
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-2"
+                  onClick={() => navigate('/chat')}
+                >
+                  <Sparkles className="w-5 h-5 mr-2" />
+                  Try AI Assistant
+                </Button>
+              </motion.div>
+            </div>
+          </motion.div>
         </div>
       </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-primary to-primary/80 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-white mb-4">Ready to Book Smarter?</h2>
-          <p className="mb-8 opacity-90 max-w-2xl mx-auto">
-            Join thousands of travelers who save time and money with SkySmart's AI-powered booking
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" onClick={() => navigate('/signup')}>
-              Get Started Free
-            </Button>
-            <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/10" onClick={() => navigate('/chat')}>
-              <Sparkles className="w-4 h-4 mr-2" />
-              Try AI Chat
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Chatbot Widget */}
-      <ChatbotWidget />
-    </div>
+    </motion.div>
   );
 }

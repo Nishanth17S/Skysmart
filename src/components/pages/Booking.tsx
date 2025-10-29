@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AppContext } from '../../App';
 import { CreditCard, User, Mail, Phone, Calendar, Shield, Lock } from 'lucide-react';
+import { formatINR } from '../../utils/indian-locale';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -19,7 +20,7 @@ export default function Booking() {
   const { user, accessToken } = context || {};
 
   const fareClass = searchParams.get('class') || 'Economy';
-  const price = parseFloat(searchParams.get('price') || '489');
+  const price = parseFloat(searchParams.get('price') || '40500');
 
   const [loading, setLoading] = useState(false);
   const [passengerData, setPassengerData] = useState({
@@ -45,9 +46,9 @@ export default function Booking() {
   });
 
   const addOnPrices = {
-    insurance: 25,
-    extraBaggage: 50,
-    seatSelection: 30,
+    insurance: 2075,
+    extraBaggage: 4150,
+    seatSelection: 2490,
   };
 
   const calculateTotal = () => {
@@ -55,7 +56,7 @@ export default function Booking() {
     if (addOns.insurance) total += addOnPrices.insurance;
     if (addOns.extraBaggage) total += addOnPrices.extraBaggage;
     if (addOns.seatSelection) total += addOnPrices.seatSelection;
-    return total.toFixed(2);
+    return total;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -105,7 +106,7 @@ export default function Booking() {
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="mb-6">
           <h1 className="text-foreground mb-2">Complete Your Booking</h1>
-          <p className="text-muted-foreground">Flight to London • {fareClass} Class</p>
+          <p className="text-muted-foreground">Delhi to London • {fareClass} Class</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -206,7 +207,7 @@ export default function Booking() {
                         <p className="text-muted-foreground">Protect your trip with comprehensive coverage</p>
                       </div>
                     </div>
-                    <p className="text-foreground">+${addOnPrices.insurance}</p>
+                    <p className="text-foreground">+{formatINR(addOnPrices.insurance)}</p>
                   </div>
 
                   <div className="flex items-center justify-between p-4 border border-border rounded-lg">
@@ -223,7 +224,7 @@ export default function Booking() {
                         <p className="text-muted-foreground">Add 1 additional checked bag (23kg)</p>
                       </div>
                     </div>
-                    <p className="text-foreground">+${addOnPrices.extraBaggage}</p>
+                    <p className="text-foreground">+{formatINR(addOnPrices.extraBaggage)}</p>
                   </div>
 
                   <div className="flex items-center justify-between p-4 border border-border rounded-lg">
@@ -240,7 +241,7 @@ export default function Booking() {
                         <p className="text-muted-foreground">Choose your favorite seat in advance</p>
                       </div>
                     </div>
-                    <p className="text-foreground">+${addOnPrices.seatSelection}</p>
+                    <p className="text-foreground">+{formatINR(addOnPrices.seatSelection)}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -319,7 +320,7 @@ export default function Booking() {
                 <CardContent className="space-y-4">
                   <div>
                     <p className="text-muted-foreground">Flight</p>
-                    <p className="text-foreground">New York → London</p>
+                    <p className="text-foreground">Delhi → London</p>
                     <p className="text-muted-foreground">Dec 15, 2025</p>
                   </div>
 
@@ -328,24 +329,24 @@ export default function Booking() {
                   <div>
                     <div className="flex justify-between mb-2">
                       <span className="text-muted-foreground">{fareClass} Class</span>
-                      <span className="text-foreground">${price}</span>
+                      <span className="text-foreground">{formatINR(price)}</span>
                     </div>
                     {addOns.insurance && (
                       <div className="flex justify-between mb-2">
                         <span className="text-muted-foreground">Travel Insurance</span>
-                        <span className="text-foreground">${addOnPrices.insurance}</span>
+                        <span className="text-foreground">{formatINR(addOnPrices.insurance)}</span>
                       </div>
                     )}
                     {addOns.extraBaggage && (
                       <div className="flex justify-between mb-2">
                         <span className="text-muted-foreground">Extra Baggage</span>
-                        <span className="text-foreground">${addOnPrices.extraBaggage}</span>
+                        <span className="text-foreground">{formatINR(addOnPrices.extraBaggage)}</span>
                       </div>
                     )}
                     {addOns.seatSelection && (
                       <div className="flex justify-between mb-2">
                         <span className="text-muted-foreground">Seat Selection</span>
-                        <span className="text-foreground">${addOnPrices.seatSelection}</span>
+                        <span className="text-foreground">{formatINR(addOnPrices.seatSelection)}</span>
                       </div>
                     )}
                   </div>
@@ -354,7 +355,7 @@ export default function Booking() {
 
                   <div className="flex justify-between">
                     <span className="text-foreground">Total</span>
-                    <span className="text-foreground">${calculateTotal()}</span>
+                    <span className="text-foreground">{formatINR(calculateTotal())}</span>
                   </div>
 
                   <Button

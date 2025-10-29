@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../App';
 import { Plane, Calendar, Bell, TrendingDown, Download, MapPin, Clock } from 'lucide-react';
+import { formatINR } from '../../utils/indian-locale';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
@@ -18,9 +19,9 @@ export default function Dashboard() {
     {
       id: '1',
       confirmationCode: 'SKY-ABC123',
-      airline: 'Delta Airlines',
-      flightNumber: 'DL 123',
-      from: 'New York (JFK)',
+      airline: 'Air India',
+      flightNumber: 'AI 123',
+      from: 'Delhi (DEL)',
       to: 'London (LHR)',
       departure: '08:30 AM',
       date: 'Dec 15, 2025',
@@ -30,10 +31,10 @@ export default function Dashboard() {
     {
       id: '2',
       confirmationCode: 'SKY-DEF456',
-      airline: 'United Airlines',
-      flightNumber: 'UA 456',
-      from: 'Los Angeles (LAX)',
-      to: 'Tokyo (NRT)',
+      airline: 'Singapore Airlines',
+      flightNumber: 'SQ 456',
+      from: 'Mumbai (BOM)',
+      to: 'Singapore (SIN)',
       departure: '10:45 PM',
       date: 'Jan 10, 2026',
       status: 'Scheduled',
@@ -45,10 +46,10 @@ export default function Dashboard() {
     {
       id: '3',
       confirmationCode: 'SKY-GHI789',
-      airline: 'British Airways',
-      flightNumber: 'BA 789',
-      from: 'London (LHR)',
-      to: 'New York (JFK)',
+      airline: 'Emirates',
+      flightNumber: 'EK 789',
+      from: 'Bangalore (BLR)',
+      to: 'Dubai (DXB)',
       date: 'Nov 5, 2024',
       status: 'Completed',
     },
@@ -57,16 +58,16 @@ export default function Dashboard() {
   const activeAlerts = [
     {
       id: '1',
-      route: 'New York → Paris',
-      targetPrice: 450,
-      currentPrice: 520,
+      route: 'Delhi → Dubai',
+      targetPrice: 18500,
+      currentPrice: 21000,
       priceChange: -8,
     },
     {
       id: '2',
-      route: 'San Francisco → Tokyo',
-      targetPrice: 600,
-      currentPrice: 580,
+      route: 'Mumbai → Singapore',
+      targetPrice: 24000,
+      currentPrice: 22500,
       priceChange: -12,
     },
   ];
@@ -115,7 +116,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-muted-foreground mb-1">Total Savings</p>
-                  <p className="text-foreground">$230</p>
+                  <p className="text-foreground">{formatINR(19090)}</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                   <TrendingDown className="w-6 h-6 text-green-600" />
@@ -271,7 +272,7 @@ export default function Dashboard() {
                         <div>
                           <p className="text-foreground">{alert.route}</p>
                           <p className="text-muted-foreground">
-                            Target: ${alert.targetPrice} • Current: ${alert.currentPrice}
+                            Target: {formatINR(alert.targetPrice)} • Current: {formatINR(alert.currentPrice)}
                           </p>
                         </div>
                       </div>

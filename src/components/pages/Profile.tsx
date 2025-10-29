@@ -29,7 +29,7 @@ export default function Profile() {
     priceAlerts: true,
     flightUpdates: true,
     newsletter: false,
-    currency: 'USD',
+    currency: 'INR',
     language: 'English',
   });
 

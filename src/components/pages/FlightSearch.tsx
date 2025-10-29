@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Plane, Clock, Calendar, TrendingDown, TrendingUp, Filter, Bell } from 'lucide-react';
+import { formatINR, ALL_AIRLINES } from '../../utils/indian-locale';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
@@ -34,75 +35,101 @@ export default function FlightSearch() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [sortBy, setSortBy] = useState('recommended');
-  const [maxPrice, setMaxPrice] = useState([1000]);
+  const [maxPrice, setMaxPrice] = useState([30000]);
   const [selectedAirlines, setSelectedAirlines] = useState<string[]>([]);
   const [stopsFilter, setStopsFilter] = useState<string[]>([]);
 
-  // Mock flight data
+  // Mock flight data with Indian airlines and INR pricing
   const flights: Flight[] = [
     {
       id: '1',
-      airline: 'Delta Airlines',
-      from: searchParams.get('from') || 'New York',
-      to: searchParams.get('to') || 'London',
-      departure: '08:30 AM',
-      arrival: '08:45 PM',
-      duration: '7h 15m',
-      price: 489,
+      airline: 'IndiGo',
+      from: searchParams.get('from') || 'Delhi',
+      to: searchParams.get('to') || 'Mumbai',
+      departure: '06:00 AM',
+      arrival: '08:15 AM',
+      duration: '2h 15m',
+      price: 4850,
       stops: 0,
       aiScore: 95,
-      priceChange: -12,
+      priceChange: -320,
     },
     {
       id: '2',
-      airline: 'United Airlines',
-      from: searchParams.get('from') || 'New York',
-      to: searchParams.get('to') || 'London',
-      departure: '11:00 AM',
-      arrival: '11:30 PM',
-      duration: '7h 30m',
-      price: 525,
+      airline: 'Air India',
+      from: searchParams.get('from') || 'Delhi',
+      to: searchParams.get('to') || 'Mumbai',
+      departure: '09:30 AM',
+      arrival: '11:45 AM',
+      duration: '2h 15m',
+      price: 5200,
       stops: 0,
       aiScore: 88,
-      priceChange: 5,
+      priceChange: 180,
     },
     {
       id: '3',
-      airline: 'British Airways',
-      from: searchParams.get('from') || 'New York',
-      to: searchParams.get('to') || 'London',
-      departure: '06:00 PM',
-      arrival: '06:15 AM',
-      duration: '7h 15m',
-      price: 459,
+      airline: 'Vistara',
+      from: searchParams.get('from') || 'Delhi',
+      to: searchParams.get('to') || 'Mumbai',
+      departure: '01:00 PM',
+      arrival: '03:20 PM',
+      duration: '2h 20m',
+      price: 6100,
       stops: 0,
       aiScore: 92,
-      priceChange: -8,
+      priceChange: -250,
     },
     {
       id: '4',
-      airline: 'American Airlines',
-      from: searchParams.get('from') || 'New York',
-      to: searchParams.get('to') || 'London',
-      departure: '03:30 PM',
-      arrival: '03:45 AM',
-      duration: '8h 15m',
-      price: 399,
-      stops: 1,
-      aiScore: 78,
-      priceChange: -15,
+      airline: 'SpiceJet',
+      from: searchParams.get('from') || 'Delhi',
+      to: searchParams.get('to') || 'Mumbai',
+      departure: '04:15 PM',
+      arrival: '06:30 PM',
+      duration: '2h 15m',
+      price: 4350,
+      stops: 0,
+      aiScore: 85,
+      priceChange: -420,
+    },
+    {
+      id: '5',
+      airline: 'Emirates',
+      from: searchParams.get('from') || 'Delhi',
+      to: searchParams.get('to') || 'Dubai',
+      departure: '03:30 AM',
+      arrival: '05:45 AM',
+      duration: '3h 15m',
+      price: 18500,
+      stops: 0,
+      aiScore: 98,
+      priceChange: -850,
+    },
+    {
+      id: '6',
+      airline: 'Singapore Airlines',
+      from: searchParams.get('from') || 'Delhi',
+      to: searchParams.get('to') || 'Singapore',
+      departure: '11:00 PM',
+      arrival: '07:30 AM',
+      duration: '5h 30m',
+      price: 24500,
+      stops: 0,
+      aiScore: 96,
+      priceChange: 500,
     },
   ];
 
-  // Mock price trend data
+  // Mock price trend data in INR
   const priceTrend = [
-    { date: 'Mon', price: 520 },
-    { date: 'Tue', price: 495 },
-    { date: 'Wed', price: 510 },
-    { date: 'Thu', price: 489 },
-    { date: 'Fri', price: 505 },
-    { date: 'Sat', price: 475 },
-    { date: 'Sun', price: 490 },
+    { date: 'Mon', price: 5200 },
+    { date: 'Tue', price: 4950 },
+    { date: 'Wed', price: 5100 },
+    { date: 'Thu', price: 4850 },
+    { date: 'Fri', price: 5050 },
+    { date: 'Sat', price: 4750 },
+    { date: 'Sun', price: 4900 },
   ];
 
   const filteredFlights = flights.filter(flight => {
@@ -198,13 +225,13 @@ export default function FlightSearch() {
 
                 {/* Price Range */}
                 <div className="mb-6">
-                  <Label className="mb-2 block">Max Price: ${maxPrice[0]}</Label>
+                  <Label className="mb-2 block">Max Price: {formatINR(maxPrice[0])}</Label>
                   <Slider
                     value={maxPrice}
                     onValueChange={setMaxPrice}
-                    max={1000}
+                    max={30000}
                     min={0}
-                    step={50}
+                    step={1000}
                     className="mb-2"
                   />
                 </div>
@@ -252,7 +279,7 @@ export default function FlightSearch() {
                 <div className="mb-6">
                   <Label className="mb-2 block">Airlines</Label>
                   <div className="space-y-2">
-                    {['Delta Airlines', 'United Airlines', 'British Airways', 'American Airlines'].map((airline) => (
+                    {['IndiGo', 'Air India', 'Vistara', 'Emirates', 'Singapore Airlines'].map((airline) => (
                       <div key={airline} className="flex items-center space-x-2">
                         <Checkbox
                           id={airline}
@@ -333,7 +360,7 @@ export default function FlightSearch() {
                     <div className="md:border-l md:pl-6 flex flex-col items-end space-y-2">
                       <div className="text-right">
                         <p className="text-muted-foreground">From</p>
-                        <p className="text-foreground">${flight.price}</p>
+                        <p className="text-foreground">{formatINR(flight.price)}</p>
                       </div>
                       <Button
                         onClick={() => navigate(`/flights/details/${flight.id}`)}

@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { AppContext } from '../../App';
 import { Bell, Plus, Trash2, Mail, Smartphone, TrendingDown, Search, Calendar } from 'lucide-react';
+import { formatINR } from '../../utils/indian-locale';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -32,11 +33,11 @@ export default function Alerts() {
   const [alerts, setAlerts] = useState<Alert[]>([
     {
       id: '1',
-      route: 'New York → Paris',
-      from: 'New York',
-      to: 'Paris',
-      targetPrice: 450,
-      currentPrice: 520,
+      route: 'Delhi → Dubai',
+      from: 'Delhi',
+      to: 'Dubai',
+      targetPrice: 18500,
+      currentPrice: 21000,
       priceChange: -8,
       dateRange: 'Dec 2025',
       emailEnabled: true,
@@ -45,11 +46,11 @@ export default function Alerts() {
     },
     {
       id: '2',
-      route: 'San Francisco → Tokyo',
-      from: 'San Francisco',
-      to: 'Tokyo',
-      targetPrice: 600,
-      currentPrice: 580,
+      route: 'Mumbai → Singapore',
+      from: 'Mumbai',
+      to: 'Singapore',
+      targetPrice: 24000,
+      currentPrice: 22500,
       priceChange: -12,
       dateRange: 'Jan 2026',
       emailEnabled: true,
@@ -188,11 +189,11 @@ export default function Alerts() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="targetPrice">Target Price (USD)</Label>
+                  <Label htmlFor="targetPrice">Target Price (₹)</Label>
                   <Input
                     id="targetPrice"
                     type="number"
-                    placeholder="500"
+                    placeholder="20000"
                     value={newAlert.targetPrice}
                     onChange={(e) => setNewAlert({ ...newAlert, targetPrice: e.target.value })}
                   />
@@ -285,11 +286,11 @@ export default function Alerts() {
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                         <div>
                           <p className="text-muted-foreground mb-1">Target Price</p>
-                          <p className="text-foreground">${alert.targetPrice}</p>
+                          <p className="text-foreground">{formatINR(alert.targetPrice)}</p>
                         </div>
                         <div>
                           <p className="text-muted-foreground mb-1">Current Price</p>
-                          <p className="text-foreground">${alert.currentPrice}</p>
+                          <p className="text-foreground">{formatINR(alert.currentPrice)}</p>
                         </div>
                         <div>
                           <p className="text-muted-foreground mb-1">Travel Dates</p>

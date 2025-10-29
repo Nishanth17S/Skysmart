@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { AppContext } from '../App';
 import { Plane, Menu, X, User, LogOut, LayoutDashboard, Bell, ActivitySquare, MessageCircle, HelpCircle } from 'lucide-react';
 import { Button } from './ui/button';
@@ -16,6 +16,15 @@ export default function Header() {
   const context = useContext(AppContext);
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   if (!context) return null;
   const { user, setUser, supabase } = context;
@@ -35,16 +44,23 @@ export default function Header() {
     { path: '/support', label: 'Help', icon: HelpCircle },
   ];
 
+  const isLandingPage = location.pathname === '/';
+
+  // Don't render header on landing page
+  if (isLandingPage) return null;
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-border">
+    <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+          <Link to="/home" className="flex items-center space-x-2 group">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
               <Plane className="w-5 h-5 text-white" />
             </div>
-            <span className="text-foreground">SkySmart</span>
+            <span className="text-foreground">
+              SkySmart
+            </span>
           </Link>
 
           {/* Desktop Navigation */}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CheckCircle, Download, Calendar, Plane, MapPin, QrCode, Mail, Share2 } from 'lucide-react';
+import { formatINR } from '../../utils/indian-locale';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Separator } from '../ui/separator';
@@ -16,26 +17,26 @@ export default function BookingConfirmation() {
     confirmationCode: 'SKY-ABC123',
     status: 'Confirmed',
     flight: {
-      airline: 'Delta Airlines',
-      flightNumber: 'DL 123',
-      from: 'New York (JFK)',
+      airline: 'Air India',
+      flightNumber: 'AI 123',
+      from: 'Delhi (DEL)',
       to: 'London (LHR)',
       departure: '08:30 AM',
       arrival: '08:45 PM',
       date: 'Dec 15, 2025',
       duration: '7h 15m',
-      terminal: 'Terminal 4',
+      terminal: 'Terminal 3',
       gate: 'A23',
     },
     passenger: {
-      name: 'John Doe',
-      email: 'john@example.com',
-      phone: '+1 234 567 8900',
+      name: 'Rahul Sharma',
+      email: 'rahul@example.com',
+      phone: '+91 98765 43210',
     },
     fareClass: 'Economy',
     seat: '12A',
     baggage: '1 x 23kg checked bag',
-    totalPrice: 489,
+    totalPrice: 40500,
   };
 
   const handleDownload = () => {

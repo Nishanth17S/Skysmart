@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { createContext, useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { projectId, publicAnonKey } from './utils/supabase/info';
@@ -6,6 +6,7 @@ import { Toaster } from './components/ui/sonner';
 import Header from './components/Header';
 
 // Pages
+import Landing from './components/pages/Landing';
 import Home from './components/pages/Home';
 import FlightSearch from './components/pages/FlightSearch';
 import FlightDetails from './components/pages/FlightDetails';
@@ -86,14 +87,15 @@ export default function App() {
     );
   }
 
-  return (
-    <AppContext.Provider value={{ user, setUser, supabase, accessToken, setAccessToken }}>
-      <Router>
-        <div className="min-h-screen bg-background">
-          <Header />
-          <main className="pt-16">
-            <Routes>
-              <Route path="/" element={<Home />} />
+  const MainContent = () => {
+    const location = useLocation();
+    const isLandingPage = location.pathname === '/';
+    
+    return (
+      <main className={isLandingPage ? '' : 'pt-16'}>
+        <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/home" element={<Home />} />
               <Route path="/flights/search" element={<FlightSearch />} />
               <Route path="/flights/details/:id" element={<FlightDetails />} />
               <Route path="/booking/:id" element={
@@ -127,8 +129,17 @@ export default function App() {
               <Route path="/chat" element={<Chat />} />
               <Route path="/support" element={<Support />} />
               <Route path="*" element={<NotFound />} />
-            </Routes>
-          </main>
+        </Routes>
+      </main>
+    );
+  };
+
+  return (
+    <AppContext.Provider value={{ user, setUser, supabase, accessToken, setAccessToken }}>
+      <Router>
+        <div className="min-h-screen bg-background">
+          <Header />
+          <MainContent />
           <Toaster />
         </div>
       </Router>
