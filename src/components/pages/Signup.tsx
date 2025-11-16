@@ -61,8 +61,12 @@ export default function Signup() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to create account');
+        console.error('Signup API error:', error);
+        throw new Error(error.error || error.message || 'Failed to create account');
       }
+
+      const result = await response.json();
+      console.log('Signup successful:', result);
 
       // Auto-login after signup
       const { data, error } = await supabase.auth.signInWithPassword({

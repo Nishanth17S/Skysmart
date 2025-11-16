@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import { projectId, publicAnonKey } from './utils/supabase/info';
 import { Toaster } from './components/ui/sonner';
 import Header from './components/Header';
+import DatabaseIndicator from './components/DatabaseIndicator';
 
 // Pages
 import Landing from './components/pages/Landing';
@@ -20,6 +21,7 @@ import Login from './components/pages/Login';
 import Signup from './components/pages/Signup';
 import Chat from './components/pages/Chat';
 import Support from './components/pages/Support';
+import DatabaseAdmin from './components/pages/DatabaseAdmin';
 import NotFound from './components/pages/NotFound';
 
 // Supabase client
@@ -128,6 +130,11 @@ export default function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/support" element={<Support />} />
+              <Route path="/admin/database" element={
+                <ProtectedRoute>
+                  <DatabaseAdmin />
+                </ProtectedRoute>
+              } />
               <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
@@ -141,6 +148,7 @@ export default function App() {
           <Header />
           <MainContent />
           <Toaster />
+          <DatabaseIndicator />
         </div>
       </Router>
     </AppContext.Provider>

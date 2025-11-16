@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useContext, useState, useEffect } from 'react';
 import { AppContext } from '../App';
-import { Plane, Menu, X, User, LogOut, LayoutDashboard, Bell, ActivitySquare, MessageCircle, HelpCircle } from 'lucide-react';
+import { Plane, Menu, X, User, LogOut, LayoutDashboard, Bell, ActivitySquare, MessageCircle, HelpCircle, Database } from 'lucide-react';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -119,6 +119,12 @@ export default function Header() {
                     <Link to="/dashboard" className="cursor-pointer">
                       <LayoutDashboard className="w-4 h-4 mr-2" />
                       Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin/database" className="cursor-pointer">
+                      <Database className="w-4 h-4 mr-2" />
+                      Database
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

@@ -32,7 +32,12 @@ export default function Login() {
         password: credentials.password,
       });
 
-      if (error) throw error;
+      console.log('Login attempt:', { hasData: !!data, hasError: !!error });
+      
+      if (error) {
+        console.error('Login error from Supabase:', error);
+        throw error;
+      }
 
       if (data.session && setUser && setAccessToken) {
         setAccessToken(data.session.access_token);

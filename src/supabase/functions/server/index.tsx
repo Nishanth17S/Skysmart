@@ -32,17 +32,77 @@ app.get("/make-server-e56e4e4c/health", (c) => {
   return c.json({ status: "ok" });
 });
 
+// Database connection test endpoint
+app.get("/make-server-e56e4e4c/db-test", async (c) => {
+  try {
+    console.log('=== DATABASE CONNECTION TEST ===');
+    console.log('SUPABASE_URL:', Deno.env.get('SUPABASE_URL'));
+    console.log('SUPABASE_SERVICE_ROLE_KEY exists:', !!Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'));
+    
+    // Test 1: KV Store Test
+    const testKey = `test:${Date.now()}`;
+    const testValue = { message: 'Database connection test', timestamp: new Date().toISOString() };
+    
+    console.log('Test 1: Writing to KV store...');
+    await kv.set(testKey, testValue);
+    console.log('✓ Write successful');
+    
+    console.log('Test 2: Reading from KV store...');
+    const retrieved = await kv.get(testKey);
+    console.log('✓ Read successful:', retrieved);
+    
+    console.log('Test 3: Deleting from KV store...');
+    await kv.del(testKey);
+    console.log('✓ Delete successful');
+    
+    // Test 4: Auth connection test
+    console.log('Test 4: Testing auth connection...');
+    const { data: { users }, error: listError } = await supabase.auth.admin.listUsers();
+    if (listError) {
+      console.error('Auth list users error:', listError);
+      return c.json({ 
+        error: 'Auth connection failed', 
+        details: listError.message,
+        kvStoreWorking: true 
+      }, 500);
+    }
+    console.log('✓ Auth connection successful. Users in database:', users?.length || 0);
+    
+    return c.json({ 
+      status: 'success',
+      message: 'Database fully connected and operational!',
+      tests: {
+        kvStore: 'passed',
+        auth: 'passed'
+      },
+      userCount: users?.length || 0,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error: any) {
+    console.error('Database test error:', error);
+    return c.json({ 
+      error: 'Database test failed', 
+      message: error.message,
+      stack: error.stack 
+    }, 500);
+  }
+});
+
 // Signup endpoint
 app.post("/make-server-e56e4e4c/signup", async (c) => {
   try {
     const body = await c.req.json();
     const { email, password, name } = body;
 
+    console.log('Signup request received for email:', email);
+
     if (!email || !password) {
+      console.error('Missing required fields:', { hasEmail: !!email, hasPassword: !!password });
       return c.json({ error: "Email and password are required" }, 400);
     }
 
     // Create user with Supabase Auth
+    console.log('Creating user with Supabase auth...');
     const { data, error } = await supabase.auth.admin.createUser({
       email,
       password,
@@ -51,9 +111,11 @@ app.post("/make-server-e56e4e4c/signup", async (c) => {
     });
 
     if (error) {
-      console.error('Signup error:', error);
+      console.error('Supabase auth.admin.createUser error:', error);
       return c.json({ error: error.message }, 400);
     }
+
+    console.log('User created successfully:', data.user.id);
 
     // Store user profile in KV store
     await kv.set(`user:${data.user.id}`, {
@@ -63,13 +125,15 @@ app.post("/make-server-e56e4e4c/signup", async (c) => {
       createdAt: new Date().toISOString(),
     });
 
+    console.log('User profile stored in KV store');
+
     return c.json({ 
       success: true, 
       userId: data.user.id,
       message: "Account created successfully" 
     });
   } catch (error: any) {
-    console.error('Signup error:', error);
+    console.error('Signup endpoint error:', error);
     return c.json({ error: error.message || "Internal server error" }, 500);
   }
 });
