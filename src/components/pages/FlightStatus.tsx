@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Search, Plane, Clock, MapPin, AlertCircle, CheckCircle, Calendar, Bell } from 'lucide-react';
+import { FLIGHT_DATABASE, FlightData } from '../../utils/flight-data';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -11,44 +12,31 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 export default function FlightStatus() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<'flightNumber' | 'route'>('flightNumber');
-  const [flightData, setFlightData] = useState<any>(null);
+  const [flightData, setFlightData] = useState<FlightData | null>(null);
   const [loading, setLoading] = useState(false);
-
-  // Mock flight status data
-  const mockFlightData = {
-    flightNumber: 'DL 123',
-    airline: 'Delta Airlines',
-    aircraft: 'Boeing 777-300ER',
-    status: 'On Time',
-    departure: {
-      airport: 'John F. Kennedy International (JFK)',
-      city: 'New York',
-      time: '08:30 AM',
-      date: 'Dec 15, 2025',
-      terminal: 'Terminal 4',
-      gate: 'A23',
-    },
-    arrival: {
-      airport: 'London Heathrow (LHR)',
-      city: 'London',
-      time: '08:45 PM',
-      date: 'Dec 15, 2025',
-      terminal: 'Terminal 5',
-      gate: 'B12',
-    },
-    duration: '7h 15m',
-    baggage: 'Carousel 3',
-    delay: null,
-  };
+  const [notFound, setNotFound] = useState(false);
 
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
     setLoading(true);
-    // Simulate API call
+    setNotFound(false);
+    
+    // Simulate API call delay
     setTimeout(() => {
-      setFlightData(mockFlightData);
+      // Search for flight by flight number (case insensitive, with or without spaces/dashes)
+      const normalizedQuery = searchQuery.trim().toUpperCase().replace(/[\s-]/g, '');
+      const foundFlight = FLIGHT_DATABASE.find(flight => 
+        flight.flightNumber.replace(/[\s-]/g, '').toUpperCase() === normalizedQuery
+      );
+      
+      if (foundFlight) {
+        setFlightData(foundFlight);
+      } else {
+        setFlightData(null);
+        setNotFound(true);
+      }
       setLoading(false);
-    }, 1000);
+    }, 800);
   };
 
   return (
@@ -79,7 +67,7 @@ export default function FlightStatus() {
                       <Plane className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                       <Input
                         id="flightNumber"
-                        placeholder="e.g. DL 123"
+                        placeholder="e.g. 6E-2045, AI-864, UK-955"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -181,17 +169,17 @@ export default function FlightStatus() {
                         <p className="text-foreground">Departure</p>
                         <Badge variant="secondary">{flightData.status}</Badge>
                       </div>
-                      <p className="text-foreground">{flightData.departure.time}</p>
-                      <p className="text-foreground">{flightData.departure.airport}</p>
-                      <p className="text-muted-foreground">{flightData.departure.city} • {flightData.departure.date}</p>
+                      <p className="text-foreground">{flightData.departure}</p>
+                      <p className="text-foreground">{flightData.departureDetails.airport}</p>
+                      <p className="text-muted-foreground">{flightData.departureDetails.city} • {flightData.departureDetails.date}</p>
                       <div className="mt-3 grid grid-cols-2 gap-2">
                         <div className="flex items-center space-x-2 p-2 bg-secondary rounded-lg">
                           <MapPin className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-foreground">{flightData.departure.terminal}</span>
+                          <span className="text-foreground">{flightData.departureDetails.terminal}</span>
                         </div>
                         <div className="flex items-center space-x-2 p-2 bg-secondary rounded-lg">
                           <MapPin className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-foreground">Gate {flightData.departure.gate}</span>
+                          <span className="text-foreground">Gate {flightData.departureDetails.gate}</span>
                         </div>
                       </div>
                     </div>
@@ -220,17 +208,17 @@ export default function FlightStatus() {
                           </Badge>
                         )}
                       </div>
-                      <p className="text-foreground">{flightData.arrival.time}</p>
-                      <p className="text-foreground">{flightData.arrival.airport}</p>
-                      <p className="text-muted-foreground">{flightData.arrival.city} • {flightData.arrival.date}</p>
+                      <p className="text-foreground">{flightData.arrival}</p>
+                      <p className="text-foreground">{flightData.arrivalDetails.airport}</p>
+                      <p className="text-muted-foreground">{flightData.arrivalDetails.city} • {flightData.arrivalDetails.date}</p>
                       <div className="mt-3 grid grid-cols-2 gap-2">
                         <div className="flex items-center space-x-2 p-2 bg-secondary rounded-lg">
                           <MapPin className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-foreground">{flightData.arrival.terminal}</span>
+                          <span className="text-foreground">{flightData.arrivalDetails.terminal}</span>
                         </div>
                         <div className="flex items-center space-x-2 p-2 bg-secondary rounded-lg">
                           <MapPin className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-foreground">Gate {flightData.arrival.gate}</span>
+                          <span className="text-foreground">Gate {flightData.arrivalDetails.gate}</span>
                         </div>
                       </div>
                     </div>
@@ -280,8 +268,24 @@ export default function FlightStatus() {
           </div>
         )}
 
+        {/* Not Found State */}
+        {notFound && !loading && (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <AlertCircle className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
+              <h3 className="text-foreground mb-2">Flight Not Found</h3>
+              <p className="text-muted-foreground mb-4">
+                We couldn't find a flight with number "{searchQuery}". Please check the flight number and try again.
+              </p>
+              <p className="text-muted-foreground">
+                Available flights: 6E-2045, AI-864, UK-955, SG-8194, EK-512, SQ-406, QP-1303, QR-572, LH-761, BA-142, SG-8945, AI-658
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Empty State */}
-        {!flightData && !loading && (
+        {!flightData && !loading && !notFound && (
           <Card>
             <CardContent className="p-12 text-center">
               <Plane className="w-16 h-16 text-muted-foreground mx-auto mb-4" />

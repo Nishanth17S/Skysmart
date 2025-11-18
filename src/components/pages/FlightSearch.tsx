@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Plane, Clock, Calendar, TrendingDown, TrendingUp, Filter, Bell } from 'lucide-react';
 import { formatINR, ALL_AIRLINES } from '../../utils/indian-locale';
+import { FLIGHT_DATABASE, FlightData } from '../../utils/flight-data';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
@@ -17,109 +18,16 @@ import {
 } from '../ui/select';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-interface Flight {
-  id: string;
-  airline: string;
-  from: string;
-  to: string;
-  departure: string;
-  arrival: string;
-  duration: string;
-  price: number;
-  stops: number;
-  aiScore: number;
-  priceChange: number;
-}
-
 export default function FlightSearch() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [sortBy, setSortBy] = useState('recommended');
-  const [maxPrice, setMaxPrice] = useState([30000]);
+  const [maxPrice, setMaxPrice] = useState([40000]);
   const [selectedAirlines, setSelectedAirlines] = useState<string[]>([]);
   const [stopsFilter, setStopsFilter] = useState<string[]>([]);
 
-  // Mock flight data with Indian airlines and INR pricing
-  const flights: Flight[] = [
-    {
-      id: '1',
-      airline: 'IndiGo',
-      from: searchParams.get('from') || 'Delhi',
-      to: searchParams.get('to') || 'Mumbai',
-      departure: '06:00 AM',
-      arrival: '08:15 AM',
-      duration: '2h 15m',
-      price: 4850,
-      stops: 0,
-      aiScore: 95,
-      priceChange: -320,
-    },
-    {
-      id: '2',
-      airline: 'Air India',
-      from: searchParams.get('from') || 'Delhi',
-      to: searchParams.get('to') || 'Mumbai',
-      departure: '09:30 AM',
-      arrival: '11:45 AM',
-      duration: '2h 15m',
-      price: 5200,
-      stops: 0,
-      aiScore: 88,
-      priceChange: 180,
-    },
-    {
-      id: '3',
-      airline: 'Vistara',
-      from: searchParams.get('from') || 'Delhi',
-      to: searchParams.get('to') || 'Mumbai',
-      departure: '01:00 PM',
-      arrival: '03:20 PM',
-      duration: '2h 20m',
-      price: 6100,
-      stops: 0,
-      aiScore: 92,
-      priceChange: -250,
-    },
-    {
-      id: '4',
-      airline: 'SpiceJet',
-      from: searchParams.get('from') || 'Delhi',
-      to: searchParams.get('to') || 'Mumbai',
-      departure: '04:15 PM',
-      arrival: '06:30 PM',
-      duration: '2h 15m',
-      price: 4350,
-      stops: 0,
-      aiScore: 85,
-      priceChange: -420,
-    },
-    {
-      id: '5',
-      airline: 'Emirates',
-      from: searchParams.get('from') || 'Delhi',
-      to: searchParams.get('to') || 'Dubai',
-      departure: '03:30 AM',
-      arrival: '05:45 AM',
-      duration: '3h 15m',
-      price: 18500,
-      stops: 0,
-      aiScore: 98,
-      priceChange: -850,
-    },
-    {
-      id: '6',
-      airline: 'Singapore Airlines',
-      from: searchParams.get('from') || 'Delhi',
-      to: searchParams.get('to') || 'Singapore',
-      departure: '11:00 PM',
-      arrival: '07:30 AM',
-      duration: '5h 30m',
-      price: 24500,
-      stops: 0,
-      aiScore: 96,
-      priceChange: 500,
-    },
-  ];
+  // Use flight data from shared database
+  const flights = FLIGHT_DATABASE;
 
   // Mock price trend data in INR
   const priceTrend = [
@@ -148,6 +56,14 @@ export default function FlightSearch() {
     if (sortBy === 'recommended') return b.aiScore - a.aiScore;
     return 0;
   });
+
+  // Reset filters function
+  const handleResetFilters = () => {
+    setSortBy('recommended');
+    setMaxPrice([40000]);
+    setSelectedAirlines([]);
+    setStopsFilter([]);
+  };
 
   return (
     <div className="min-h-screen bg-secondary/20 py-8">
@@ -205,7 +121,7 @@ export default function FlightSearch() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-foreground">Filters</h3>
-                  <Button variant="ghost" size="sm">Reset</Button>
+                  <Button variant="ghost" size="sm" onClick={handleResetFilters}>Reset</Button>
                 </div>
 
                 {/* Sort By */}
@@ -229,7 +145,7 @@ export default function FlightSearch() {
                   <Slider
                     value={maxPrice}
                     onValueChange={setMaxPrice}
-                    max={30000}
+                    max={40000}
                     min={0}
                     step={1000}
                     className="mb-2"
@@ -279,7 +195,7 @@ export default function FlightSearch() {
                 <div className="mb-6">
                   <Label className="mb-2 block">Airlines</Label>
                   <div className="space-y-2">
-                    {['IndiGo', 'Air India', 'Vistara', 'Emirates', 'Singapore Airlines'].map((airline) => (
+                    {['IndiGo', 'Air India', 'Vistara', 'SpiceJet', 'Akasa Air', 'Emirates', 'Qatar Airways', 'Singapore Airlines', 'Lufthansa', 'British Airways'].map((airline) => (
                       <div key={airline} className="flex items-center space-x-2">
                         <Checkbox
                           id={airline}
@@ -319,7 +235,10 @@ export default function FlightSearch() {
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center space-x-2">
                           <Plane className="w-5 h-5 text-primary" />
-                          <span className="text-foreground">{flight.airline}</span>
+                          <div>
+                            <span className="text-foreground">{flight.airline}</span>
+                            <span className="text-muted-foreground ml-2">• {flight.flightNumber}</span>
+                          </div>
                           {flight.aiScore >= 90 && (
                             <Badge className="bg-primary">AI Top Pick</Badge>
                           )}
