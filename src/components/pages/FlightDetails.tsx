@@ -1,8 +1,8 @@
+import { useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useContext } from 'react';
-import { AppContext } from '../../App';
-import { Plane, Clock, Users, Briefcase, Coffee, Wifi, ArrowRight, Star, TrendingDown, Calendar } from 'lucide-react';
+import { Plane, Clock, Calendar, Shield, Wifi, Monitor, Utensils, TrendingDown, Star, ArrowLeft } from 'lucide-react';
 import { formatINR } from '../../utils/indian-locale';
+import { AppContext } from '../../App';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
@@ -72,14 +72,16 @@ export default function FlightDetails() {
   return (
     <div className="min-h-screen bg-secondary/20 py-8">
       <div className="container mx-auto px-4 max-w-6xl">
-        {/* Breadcrumb */}
-        <div className="mb-6">
-          <button onClick={() => navigate(-1)} className="text-primary hover:underline">
-            ← Back to results
-          </button>
-        </div>
+        <Button
+          variant="ghost"
+          onClick={() => navigate(-1)}
+          className="mb-6"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Search
+        </Button>
 
-        {/* Flight Header */}
+        {/* Flight Overview */}
         <Card className="mb-6">
           <CardContent className="p-6">
             <div className="flex items-start justify-between mb-6">
@@ -242,11 +244,11 @@ export default function FlightDetails() {
                         <span className="text-foreground">In-flight WiFi ($)</span>
                       </li>
                       <li className="flex items-center">
-                        <Coffee className="w-4 h-4 mr-2 text-primary" />
+                        <Utensils className="w-4 h-4 mr-2 text-primary" />
                         <span className="text-foreground">Complimentary meals & drinks</span>
                       </li>
                       <li className="flex items-center">
-                        <Briefcase className="w-4 h-4 mr-2 text-primary" />
+                        <Monitor className="w-4 h-4 mr-2 text-primary" />
                         <span className="text-foreground">Entertainment system</span>
                       </li>
                     </ul>

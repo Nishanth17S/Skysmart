@@ -45,7 +45,7 @@ export const FLIGHT_DATABASE: FlightData[] = [
     price: 4850,
     stops: 0,
     aiScore: 95,
-    priceChange: -320,
+    priceChange: -12, // Fixed: was -320, now realistic percentage
     status: 'On Time',
     departureDetails: {
       airport: 'Indira Gandhi International (DEL)',
@@ -77,7 +77,7 @@ export const FLIGHT_DATABASE: FlightData[] = [
     price: 5200,
     stops: 0,
     aiScore: 88,
-    priceChange: 180,
+    priceChange: 8, // Fixed: was 180
     status: 'Boarding',
     departureDetails: {
       airport: 'Indira Gandhi International (DEL)',
@@ -109,7 +109,7 @@ export const FLIGHT_DATABASE: FlightData[] = [
     price: 6100,
     stops: 0,
     aiScore: 92,
-    priceChange: -250,
+    priceChange: -18, // Fixed: was -250
     status: 'On Time',
     departureDetails: {
       airport: 'Indira Gandhi International (DEL)',
@@ -141,7 +141,7 @@ export const FLIGHT_DATABASE: FlightData[] = [
     price: 4350,
     stops: 0,
     aiScore: 85,
-    priceChange: -420,
+    priceChange: -22, // Fixed: was -420
     status: 'On Time',
     departureDetails: {
       airport: 'Indira Gandhi International (DEL)',
@@ -173,7 +173,7 @@ export const FLIGHT_DATABASE: FlightData[] = [
     price: 18500,
     stops: 0,
     aiScore: 98,
-    priceChange: -850,
+    priceChange: -28, // Fixed: was -850
     status: 'Departed',
     departureDetails: {
       airport: 'Indira Gandhi International (DEL)',
@@ -205,7 +205,7 @@ export const FLIGHT_DATABASE: FlightData[] = [
     price: 24500,
     stops: 0,
     aiScore: 96,
-    priceChange: 500,
+    priceChange: 5, // Fixed: was 500
     status: 'On Time',
     departureDetails: {
       airport: 'Indira Gandhi International (DEL)',
@@ -237,7 +237,7 @@ export const FLIGHT_DATABASE: FlightData[] = [
     price: 4650,
     stops: 0,
     aiScore: 90,
-    priceChange: -280,
+    priceChange: -15, // Fixed: was -280
     status: 'On Time',
     departureDetails: {
       airport: 'Indira Gandhi International (DEL)',
@@ -269,7 +269,7 @@ export const FLIGHT_DATABASE: FlightData[] = [
     price: 22000,
     stops: 0,
     aiScore: 97,
-    priceChange: -650,
+    priceChange: -25, // Fixed: was -650
     status: 'On Time',
     departureDetails: {
       airport: 'Indira Gandhi International (DEL)',
@@ -301,7 +301,7 @@ export const FLIGHT_DATABASE: FlightData[] = [
     price: 35000,
     stops: 0,
     aiScore: 94,
-    priceChange: 320,
+    priceChange: 10, // Fixed: was 320
     status: 'Delayed',
     departureDetails: {
       airport: 'Indira Gandhi International (DEL)',
@@ -333,7 +333,7 @@ export const FLIGHT_DATABASE: FlightData[] = [
     price: 38500,
     stops: 0,
     aiScore: 93,
-    priceChange: 450,
+    priceChange: 12, // Fixed: was 450
     status: 'On Time',
     departureDetails: {
       airport: 'Indira Gandhi International (DEL)',
@@ -365,7 +365,7 @@ export const FLIGHT_DATABASE: FlightData[] = [
     price: 4200,
     stops: 0,
     aiScore: 84,
-    priceChange: -380,
+    priceChange: -20, // Fixed: was -380
     status: 'On Time',
     departureDetails: {
       airport: 'Indira Gandhi International (DEL)',
@@ -397,7 +397,7 @@ export const FLIGHT_DATABASE: FlightData[] = [
     price: 5500,
     stops: 1,
     aiScore: 82,
-    priceChange: 150,
+    priceChange: 6, // Fixed: was 150
     status: 'On Time',
     departureDetails: {
       airport: 'Indira Gandhi International (DEL)',

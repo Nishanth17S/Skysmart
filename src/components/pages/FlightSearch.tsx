@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Plane, Clock, Calendar, TrendingDown, TrendingUp, Filter, Bell } from 'lucide-react';
+import { Plane, Clock, Calendar, TrendingDown, TrendingUp, Filter, Bell, ArrowLeft } from 'lucide-react';
 import { formatINR, ALL_AIRLINES } from '../../utils/indian-locale';
 import { FLIGHT_DATABASE, FlightData } from '../../utils/flight-data';
 import { Button } from '../ui/button';
@@ -70,6 +70,14 @@ export default function FlightSearch() {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate(-1)}
+            className="mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
           <h1 className="text-foreground mb-2">
             {searchParams.get('from')} → {searchParams.get('to')}
           </h1>

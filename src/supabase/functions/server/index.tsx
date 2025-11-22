@@ -177,6 +177,7 @@ app.post("/make-server-e56e4e4c/bookings", async (c) => {
     }
 
     const bookingId = `booking_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const confirmationCode = `SKY-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
     
     const booking = {
       id: bookingId,
@@ -187,7 +188,10 @@ app.post("/make-server-e56e4e4c/bookings", async (c) => {
       addOns: body.addOns,
       totalPrice: body.totalPrice,
       status: 'confirmed',
-      confirmationCode: `SKY-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+      confirmationCode,
+      seat: `${Math.floor(Math.random() * 30) + 1}${String.fromCharCode(65 + Math.floor(Math.random() * 6))}`, // Random seat like 12A
+      baggage: '1 x 23kg checked bag',
+      date: new Date().toISOString().split('T')[0],
       createdAt: new Date().toISOString(),
     };
 

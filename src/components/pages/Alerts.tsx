@@ -1,7 +1,9 @@
 import { useState, useContext } from 'react';
 import { AppContext } from '../../App';
-import { Bell, Plus, Trash2, Mail, Smartphone, TrendingDown, Search, Calendar } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Bell, Plus, Trash2, Mail, Smartphone, TrendingDown, Search, Calendar, ArrowLeft, Plane } from 'lucide-react';
 import { formatINR } from '../../utils/indian-locale';
+import { FLIGHT_DATABASE } from '../../utils/flight-data';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -69,6 +71,8 @@ export default function Alerts() {
   });
 
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedFlight, setSelectedFlight] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleCreateAlert = async () => {
     if (!newAlert.from || !newAlert.to || !newAlert.targetPrice) {
@@ -140,6 +144,15 @@ export default function Alerts() {
   return (
     <div className="min-h-screen bg-secondary/20 py-8">
       <div className="container mx-auto px-4 max-w-5xl">
+        <Button
+          variant="ghost"
+          onClick={() => navigate(-1)}
+          className="mb-6"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back
+        </Button>
+
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>

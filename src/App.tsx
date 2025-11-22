@@ -8,7 +8,6 @@ import DatabaseIndicator from './components/DatabaseIndicator';
 
 // Pages
 import Landing from './components/pages/Landing';
-import Home from './components/pages/Home';
 import FlightSearch from './components/pages/FlightSearch';
 import FlightDetails from './components/pages/FlightDetails';
 import Booking from './components/pages/Booking';
@@ -97,7 +96,6 @@ export default function App() {
       <main className={isLandingPage ? '' : 'pt-16'}>
         <Routes>
               <Route path="/" element={<Landing />} />
-              <Route path="/home" element={<Home />} />
               <Route path="/flights/search" element={<FlightSearch />} />
               <Route path="/flights/details/:id" element={<FlightDetails />} />
               <Route path="/booking/:id" element={
