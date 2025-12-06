@@ -1,9 +1,4 @@
-
-  # AI Flight Booking Platform
-
-  This is a code bundle for AI Flight Booking Platform. The original project is available at https://www.figma.com/design/4aTEZSNNPSazeH15NAest7/AI-Flight-Booking-Platform.
-
-  ## Running the code
+## Running the code
 
   Run `npm i` to install the dependencies.
 
